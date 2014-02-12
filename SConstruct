@@ -53,7 +53,7 @@ src = ["testgtkimageviewer.c",
        "gtk-image-viewer-fixed.c"
        ]
 
-lib = env.Library('gtkimageviewer',
+lib = env.Library('gtkimageviewer-1.0',
                   ['gtk-image-viewer-fixed.c'])
 include = ['gtk-image-viewer.h']
 env.Command("gtk-image-viewer-fixed.c",
@@ -79,7 +79,7 @@ env.Command("gtkimageviewer.pc",
 env.Alias("install",
           [env.Install('${PREFIX}/lib',
                        lib),
-           env.Install('${PREFIX}/include',
+           env.Install('${PREFIX}/include/gtkimageviewer-1.0/gtkimageviewer',
                        include),
            env.AlwaysBuild(env.Install('${PREFIX}/lib/pkgconfig',
                                        'gtkimageviewer.pc')),

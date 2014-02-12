@@ -8,4 +8,4 @@ Description: Gtk Image viewer
 Version: @VERSION@
 Requires: gtk+-2.0
 Libs: -L${libdir} -lgtkimageviewer-1.0
-Cflags: -I${includedir}/gtkimageviewer-1.0 -I${libdir}/gtkimageviewer-1.0/include
+Cflags: -I${includedir}/gtkimageviewer-1.0 
