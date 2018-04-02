@@ -43,7 +43,7 @@ main (int argc, char *argv[])
       char *S_ = argv[argp++];
       CASE("-linear") { do_linear++; continue; };
       
-      fprintf(stderr, "Unknown option S_[0]!\n");
+      fprintf(stderr, "Unknown option %s!\n",S_[0]);
       exit(-1);
     }
   
