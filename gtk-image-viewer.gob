@@ -97,7 +97,12 @@ static gboolean turn_off_insensitive(GtkWidget *widget);
 
 class Gtk:Image:Viewer from Gtk:Widget
 {
-  private GdkPixbuf *image=NULL;
+  private GdkPixbuf *image=NULL
+    destroy
+    {
+      if (image)
+          g_object_unref(image);
+    };
   private gdouble current_scale_x=1;
   private gdouble current_scale_y=1;
   private gdouble current_x0;
@@ -156,7 +161,7 @@ class Gtk:Image:Viewer from Gtk:Widget
     selfp->current_scale_y = 1.0;
     selfp->current_x0 = 0;
     selfp->current_y0 = 0;
-    selfp->min_zoom = 1.0/8;
+    selfp->min_zoom = 1.0/128;
     selfp->max_zoom = 128;
     selfp->scroll_width = -1;
     selfp->scroll_height = -1;
@@ -440,8 +445,10 @@ class Gtk:Image:Viewer from Gtk:Widget
     // printf("Leave notify\n");
     if (!GTK_WIDGET_HAS_FOCUS (widget))
       gtk_widget_grab_focus (widget);
-    if (selfp->timeout_id)
+    if (selfp->timeout_id) {
         g_source_remove(selfp->timeout_id);
+        selfp->timeout_id = 0;
+    }
     selfp->is_insensitive = TRUE;
     
     return TRUE;
@@ -455,6 +462,9 @@ class Gtk:Image:Viewer from Gtk:Widget
     GtkImageViewer *self = GTK_IMAGE_VIEWER(widget);
     int ret = TRUE;
     gint k;
+    double big_scale = 2.0;
+    double small_scale = 1.1;
+    double basescale = 2.0;
     double vscale = 1.0;
 
     k = event->keyval;
@@ -463,23 +473,23 @@ class Gtk:Image:Viewer from Gtk:Widget
     case '=':
     case '+':
         if (!selfp->do_vertical_lock)
-            vscale = 1.1;
-        gtk_image_viewer_zoom_in(self, -1, -1, 1.1, vscale);
+            vscale = small_scale;
+        gtk_image_viewer_zoom_in(self, -1, -1, small_scale, vscale);
         break;
     case '>':
         if (!selfp->do_vertical_lock)
-            vscale = 2;
-        gtk_image_viewer_zoom_in(self, -1, -1, 2, vscale);
+            vscale = big_scale;
+        gtk_image_viewer_zoom_in(self, -1, -1, big_scale, vscale);
         break;
     case '<':
         if (!selfp->do_vertical_lock)
-            vscale = 2;
-        gtk_image_viewer_zoom_out(self, selfp->canvas_width/2, selfp->canvas_height/2, 2, vscale);
+            vscale = big_scale;
+        gtk_image_viewer_zoom_out(self, selfp->canvas_width/2, selfp->canvas_height/2, big_scale, vscale);
         break;
     case '-':
         if (!selfp->do_vertical_lock)
-            vscale = 2;
-        gtk_image_viewer_zoom_out(self, selfp->canvas_width/2, selfp->canvas_height/2, 1.1, vscale);
+            vscale = big_scale;
+        gtk_image_viewer_zoom_out(self, selfp->canvas_width/2, selfp->canvas_height/2, big_scale, vscale);
         break;
     case '1':
     case 'n':
@@ -2172,6 +2182,15 @@ vadjustment_value_changed (GtkAdjustment *vadjustment,
 static gboolean update_adjustments(GtkImageViewer *self)
 {
   double scroll_min_x = 0, scroll_min_y = 0, scroll_max_x=0, scroll_max_y=0;
+  double scroll_width=0, scroll_height=0;
+  double width, height;
+
+  if (!selfp->hadjustment
+      || !selfp->vadjustment
+      )
+
+  width = selfp->scroll_width;
+  height = selfp->scroll_height;
 
   // Don't rely on scroll_min_x, etc for calculation of adjustments
   // as these may have been overridden because of aspect ratio
@@ -2184,6 +2203,8 @@ static gboolean update_adjustments(GtkImageViewer *self)
                                            selfp->canvas_width+1,selfp->canvas_height+1,
                                            // output
                                            &scroll_max_x, &scroll_max_y);
+  scroll_width = scroll_max_x - scroll_min_x;
+  scroll_height = scroll_max_y - scroll_min_y;
   if (selfp->hadjustment)
     {
       selfp->hadjustment->lower = 0;

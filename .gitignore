@@ -1,0 +1,10 @@
+*~
+*.o
+*.a
+/testgtkimageviewer
+/gtk-image-viewer.c
+/gtk-image-viewer.h
+/gtkimageviewer.pc
+/.sconsign.dblite
+/gtk-image-viewer-private.h
+/gtk-image-viewer-fixed.c
