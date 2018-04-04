@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Dov Grobgeld <dov.grobgeld@gmail.com>
+ * Copyright (C) 2008-2018 Dov Grobgeld <dov.grobgeld@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -258,6 +258,18 @@ class Gtk:Image:Viewer from Gtk:Widget
 
   override (Gtk:Widget)
   void
+  map (Gtk:Widget *widget (check null type))
+  {
+    PARENT_HANDLER(widget);
+
+    GtkImageViewer *self = GTK_IMAGE_VIEWER(widget);
+
+    if (selfp->do_fill_on_resize)
+      gtk_image_viewer_zoom_fit(self);
+  }
+
+  override (Gtk:Widget)
+  void
   get_preferred_width (GtkWidget      *widget,
                        gint           *minimal_width,
                        gint           *natural_width)
@@ -430,19 +442,6 @@ class Gtk:Image:Viewer from Gtk:Widget
         }
     }
   }
-
-// TBD
-//  override (Gtk:Widget)
-//  gint
-//  expose_event (GtkWidget      *widget,
-//                GdkEventExpose *event)
-//  {
-//    gtk_image_viewer_expose_area(GTK_IMAGE_VIEWER(widget),
-//                                 event->area.x, event->area.y,
-//                                 event->area.width, event->area.height);
-//    
-//    return FALSE;
-//  }
 
   override (Gtk:Widget)
   gboolean draw(GtkWidget *widget,
