@@ -268,7 +268,7 @@ class Gtk:Image:Viewer from Gtk:Widget
       *natural_width = gdk_pixbuf_get_width(selfp->image);
     else
       *natural_width = 256;
-    *minimal_width = 64;
+    *minimal_width = 128;
   }
   
   override (Gtk:Widget)
@@ -283,7 +283,7 @@ class Gtk:Image:Viewer from Gtk:Widget
       *natural_height = gdk_pixbuf_get_height(selfp->image);
     else
       *natural_height = 256;
-    *minimal_height = 64;
+    *minimal_height = 128;
   }
 
   // From gtkdrawingarea
@@ -1997,10 +1997,6 @@ view_changed(GtkImageViewer *self,
         dx = -dx;
       if (selfp->do_flip_vertical)
         dy = -dy;
-      int src_x = (dx < 0) ? 0 : dx;
-      int src_y = (dy < 0) ? 0 : dy;
-      //      int dst_x = (dx < 0) ? -dx : 0;
-      //      int dst_y = (dy < 0) ? -dy : 0;
 
       selfp->current_x0 = x0;
 #if 0
@@ -2011,26 +2007,9 @@ view_changed(GtkImageViewer *self,
 #endif
       selfp->current_y0 = y0;
 
-#if 0
-      /* Scroll visible region */
-      gdk_draw_drawable (gtk_widget_get_window(widget),
-                         selfp->gc,
-                         gtk_widget_get_window(widget),
-                         src_x, src_y,
-                         dst_x, dst_y,
-                         GTK_WIDGET(self)->allocation.width - abs (dx),
-                         GTK_WIDGET(self)->allocation.height - abs (dy));
-#endif
-      cairo_rectangle_int_t rect = {
-          src_x, src_y,
-          gtk_widget_get_allocated_width(GTK_WIDGET(self)) - abs (dx),
-          gtk_widget_get_allocated_height(GTK_WIDGET(self)) - abs (dy)
-      };
-      cairo_region_t *region = cairo_region_create_rectangle(&rect);
-      gdk_window_move_region(gtk_widget_get_window(GTK_WIDGET(self)),
-                             region,
-                             dx,dy);
-      cairo_region_destroy(region);
+      gdk_window_scroll(gtk_widget_get_window(GTK_WIDGET(self)),
+                        dx,dy);
+
       DBG2(g_print("Filling in: dx dy = %.0f %.0f\n", dx, dy));
       /* And fill in the new areas */
       if (dx)
