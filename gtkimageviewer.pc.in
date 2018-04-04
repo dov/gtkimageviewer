@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: GtkImageViewer
 Description: Gtk Image viewer
 Version: @VERSION@
-Requires: gtk+-2.0
-Libs: -L${libdir} -lgtkimageviewer-1.0
-Cflags: -I${includedir}/gtkimageviewer-1.0 
+Requires: gtk+-3.0
+Libs: -L${libdir} -lgtkimageviewer-3.0
+Cflags: -I${includedir}/gtkimageviewer-3.0 
