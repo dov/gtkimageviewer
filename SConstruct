@@ -10,6 +10,7 @@ env['libdir'] = env['prefix']+'/lib'
 env['includedir'] = env['prefix']+'/include'
 env['VERSION'] = '0.1.0'
 env['PREFIX'] = env['prefix']
+env.Append(LIBS=['-lm'])
 
 def patch_src(env, target, source):
     out = open(str(target[0]), "wb")
@@ -47,7 +48,7 @@ def template_fill(env, target, source):
     out.close()
     inp.close()
 
-env.ParseConfig("pkg-config --cflags --libs gtk+-2.0")
+env.ParseConfig("pkg-config --cflags --libs gtk+-3.0")
 
 src = ["testgtkimageviewer.c", 
        "gtk-image-viewer-fixed.c"
