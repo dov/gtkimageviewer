@@ -59,4 +59,12 @@ executable('cairo-circles',
   dependencies : [gtkdep, m_dep]
   )
 
+executable('hello_image_viewer',
+  'hello_image_viewer.c',
+  include_directories: incs,
+  link_with: [libgtkimageviewer],
+  install: false,
+  dependencies : [gtkdep, m_dep]
+  )
+
 
