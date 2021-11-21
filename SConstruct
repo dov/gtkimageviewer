@@ -11,6 +11,7 @@ env['includedir'] = env['prefix']+'/include'
 env['VERSION'] = '0.1.0'
 env['PREFIX'] = env['prefix']
 
+# Patch problems with the gob output.
 def patch_src(env, target, source):
     out = open(str(target[0]), "wb")
     inp = open(str(source[0]), "r")
@@ -27,15 +28,23 @@ def patch_src(env, target, source):
             if re.search(r"object_signals\[SET_SCROLL_ADJUSTMENTS_SIGNAL\]",line):
                 in_area=1
 
-        out.write(line)
+        line = re.sub('GtkScrollableInterfaceIface',
+                      'GtkScrollableInterface',
+                      line)
+        line = re.sub('GTK_TYPE_SCROLLABLEINTERFACE',
+                      'GTK_TYPE_SCROLLABLE',
+                      line)
+        line = re.sub('scroll_policy"',
+                      'scroll-policy"',
+                      line)
+        out.write(line.encode('utf8'))
         
     out.close()
     inp.close()
 
-
 # All purpose template filling routine
 def template_fill(env, target, source):
-    out = open(str(target[0]), "wb")
+    out = open(str(target[0]), "w")
     inp = open(str(source[0]), "r")
 
     for line in inp.readlines():
@@ -47,8 +56,8 @@ def template_fill(env, target, source):
     out.close()
     inp.close()
 
-env.ParseConfig("pkg-config --cflags --libs gtk+-2.0")
-
+env.ParseConfig("pkg-config --cflags --libs gtk+-3.0")
+env.Append(LIBS=['m'])
 src = ["testgtkimageviewer.c", 
        "gtk-image-viewer-fixed.c"
        ]

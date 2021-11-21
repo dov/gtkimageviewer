@@ -43,7 +43,7 @@ main (int argc, char *argv[])
       char *S_ = argv[argp++];
       CASE("-linear") { do_linear++; continue; };
       
-      fprintf(stderr, "Unknown option %s!\n",S_[0]);
+      fprintf(stderr, "Unknown option %s!\n",S_);
       exit(-1);
     }
   
@@ -54,12 +54,11 @@ main (int argc, char *argv[])
     filename = argv[argp++];
     
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, FALSE);
   
   gtk_window_set_title (GTK_WINDOW (window), "Image Widget Demo");
   
-  gtk_signal_connect (GTK_OBJECT (window), "destroy",
-		      GTK_SIGNAL_FUNC (gtk_exit), NULL);
+  g_signal_connect (window, "destroy",
+                    G_CALLBACK (gtk_main_quit), NULL);
 
   image_viewer = gtk_image_viewer_new_from_file(filename);
 #if 0
@@ -73,8 +72,8 @@ main (int argc, char *argv[])
 
   gtk_widget_set_size_request (window,
                                400,200);
-  gtk_signal_connect (GTK_OBJECT(window),     "key_press_event",
-		      GTK_SIGNAL_FUNC(cb_key_press_event), NULL);
+  g_signal_connect (window,     "key_press_event",
+                    G_CALLBACK(cb_key_press_event), NULL);
 
   scrolled_win = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_win),
